@@ -1,4 +1,6 @@
 body {
   font-family: font-family: 'Changa One', cursive;
-  background-color: red;
+  background-color: white;
+  display: inline;
+  margin: 0;
 }
