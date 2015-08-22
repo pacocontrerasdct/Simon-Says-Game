@@ -7,6 +7,7 @@ $(document).ready(function(){
   var squareTopRight;
   var squareBottomLeft;
   var squareBottomRight;
+  var randomPattern;
   var playerPattern;
   var listener;
 
@@ -56,22 +57,39 @@ function setUp(){
   // Var numX pass a number to randomizer funct to get a max num of values from it 
   var numX;
   randomizer(numX);
+  console.log(laPattern);
 
+  /*************************************/
+  /*************************************/
+  // throught looping we get the DIVs with ids: #sqr1, #sqr2..
+  // need to use them to make colors change on the board 
+  for(i = 0; i < laPattern.length; i++){
+    sqrShining = '#sqr' + laPattern[i];
+    console.log($(sqrShining));
+  };
+  /*************************************/
+  /*************************************/
   
 };
 
 // Returns a random integer between numX and 1
 function randomizer(numX){
-  var randomPattern = '';
+  randomPattern = '';
   var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 1)) + 1;
 
   // Loop to create a pattern
   for(i = 0; i <= numSquaresForPattern; i++){
     number = idOfSquare();
-    randomPattern = randomPattern + ', ' + number;
+    randomPattern = randomPattern + ' ' + number;
   }
+  console.log('string random: ' + randomPattern);
+  // turn into an array
+  laPattern = randomPattern.split(' ');
+  // remove first empty value
+  laPattern.shift();
 
-  return randomPattern;
+  console.log('array random: ' + laPattern);
+  return laPattern;
 }
 
 
