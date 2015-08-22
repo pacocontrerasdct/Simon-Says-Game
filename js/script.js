@@ -10,6 +10,7 @@ $(document).ready(function(){
   var playerPattern;
   var listener;
 
+
   //$('body').css({'background-color':'yellow'});
   //$('body').html('<div id="house"><ul><li>');
   //$('div').html('HOLA');
@@ -30,11 +31,11 @@ function setUp(){
   $('#container').html('<div id="sqr1" class="sqr"></div><div id="sqr2" class="sqr"></div><div id="sqr3" class="sqr"></div><div id="sqr4" class="sqr"></div>');
   // Giving css attributes to the container and squares using a Square Factory:
   // (backgroundColor, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius)
-  squareContainer = new squareFactory('black', '100px', '104px', '50px auto', '2px', 'block', '100px', '100px', '100px');
-  squareTopLeft = new squareFactory('rgba(255,0,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '100px 0 0 0', '100px 0 0 0', '100px 0 0 0', '.on("click", getDarker)');
-  squareTopRight = new squareFactory('rgba(255,255,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 100px  0 0', '0 100px  0 0', '0 100px  0 0');
-  squareBottomLeft = new squareFactory('rgba(0,0,255,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 0 0 100px', '0 0 0 100px', '0 0 0 100px');
-  squareBottomRight = new squareFactory('rgba(0,255,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 0 100px 0', '0 0 100px 0', '0 0 100px 0');
+  squareContainer = new squareFactory('rgba(0,0,0,1)', '100px', '104px', '50px auto', '2px', 'block', '100px', '100px', '100px');
+  squareTopLeft = new squareFactory('rgba(255,0,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '100px 0 50px 0', '100px 0 50px 0', '100px 0 50px 0');
+  squareTopRight = new squareFactory('rgba(255,255,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 100px  0 50px', '0 100px  0 50px', '0 100px  0 50px');
+  squareBottomLeft = new squareFactory('rgba(0,0,255,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 50px 0 100px', '0 50px 0 100px', '0 50px 0 100px');
+  squareBottomRight = new squareFactory('rgba(0,255,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '50px 0 100px 0', '50px 0 100px 0', '50px 0 100px 0');
 
   console.log(squareContainer);
   
@@ -46,25 +47,24 @@ function setUp(){
       'border':'5px solid black'
   });
 
-  $('.sqr').css(squareTopLeft).on('click', getLighterColor).one('mouseout',getnormalColor);
+  $('#sqr1').css(squareTopLeft).on('click', getLighterColor);
   $('#sqr2').css(squareTopRight).on('click', getLighterColor);
   $('#sqr3').css(squareBottomLeft).on('click', getLighterColor);
   $('#sqr4').css(squareBottomRight).on('click', getLighterColor);
   
  
-  
-
-  randomizer();
+  // Var numX pass a number to randomizer funct to get a max num of values from it 
+  var numX;
+  randomizer(numX);
 
   
 };
 
-// Returns a random integer between minNum and maxNum
-function randomizer(){
+// Returns a random integer between numX and 1
+function randomizer(numX){
   var randomPattern = '';
-  // Got a number between 1 and 10
-  var numSquaresForPattern = Math.floor(Math.random() * (20 - 1 + 1)) + 1;
-  
+  var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 1)) + 1;
+
   // Loop to create a pattern
   for(i = 0; i <= numSquaresForPattern; i++){
     number = idOfSquare();
@@ -99,18 +99,21 @@ function getLighterColor(){
   // So color will look like lightener
   color = $(this).css('background-color').replace('0.8','1');
   newColor = $(this).css('background-color', color);
+
   console.log('getting new css backgroundColor: ' + newColor);
   //return color;
-  $(this).one('mouseout',getnormalColor(newColor));
+  $(this).one('mouseout', getnormalColor);
 };
 
-function getnormalColor(newColor){
-  console.log('newcolor in get: ' + newColor);
+function getnormalColor(){
+  console.log('newcolor in get: ' + color);
   //On mouse out color returns to its previous value
-  oldColor = color.replace('1','0.8');
+  color = color.replace('1','0.8')
 
-  console.log('again old color? ' + oldColor);
-  $(oldColor).delay(1000).css('background-color', 'black');
+  $(this).css('background-color', color);
+
+  console.log('again old color? ' + color);
+  //$(oldColor).css('background-color', 'black');
 }
 
 
