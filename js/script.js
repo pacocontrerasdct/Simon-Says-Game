@@ -1,19 +1,15 @@
 $(document).ready(function(){
   
   console.log('Ready!!!');
-
+  // Declaring some variables
+  var squareContainer;
   var squareTopLeft;
   var squareTopRight;
   var squareBottomLeft;
   var squareBottomRight;
-  
   var playerPattern;
+  var listener;
 
-
-
-
-
-  
   //$('body').css({'background-color':'yellow'});
   //$('body').html('<div id="house"><ul><li>');
   //$('div').html('HOLA');
@@ -24,8 +20,6 @@ $(document).ready(function(){
   //$('#house').on('hover', blues);
   //$('#house').on('mouseleave', blues);
 
-//squareTopleft;
-
   setUp();
 
 });
@@ -34,69 +28,31 @@ function setUp(){
   // Building a container and the four div for each square of the board
   $('body').html('<div id="container" class="containerClass">');
   $('#container').html('<div id="sqr1" class="sqr"></div><div id="sqr2" class="sqr"></div><div id="sqr3" class="sqr"></div><div id="sqr4" class="sqr"></div>');
-  // Giving css attributes to the container and squares 
-  $('.sqr').css({
-    'width':'50%',
-    'height':'50px',
-    'margin':'0',
-    'padding':'0',
-    'display':'inline-block'
-  });
+  // Giving css attributes to the container and squares using a Square Factory:
+  // (backgroundColor, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius)
+  squareContainer = new squareFactory('black', '100px', '104px', '50px auto', '2px', 'block', '100px', '100px', '100px');
+  squareTopLeft = new squareFactory('red', '50px', '50px', '0', '0', 'inline-block', '100px 0 0 0', '100px 0 0 0', '100px 0 0 0', '.on("click", getDarker)');
+  squareTopRight = new squareFactory('yellow', '50px', '50px', '0', '0', 'inline-block', '0 100px  0 0', '0 100px  0 0', '0 100px  0 0');
+  squareBottomLeft = new squareFactory('blue', '50px', '50px', '0', '0', 'inline-block', '0 0 0 100px', '0 0 0 100px', '0 0 0 100px');
+  squareBottomRight = new squareFactory('green', '50px', '50px', '0', '0', 'inline-block', '0 0 100px 0', '0 0 100px 0', '0 0 100px 0');
 
+  console.log(squareContainer);
+  
+  // Adding CSS atributes
+  $('.containerClass').css(squareContainer);
   $('.containerClass').css({
-    'margin':'50px auto',
-    'padding':'2px',
-    'width':'100px',
-    'height':'104px',
-    'display':'block',
-    'text-align':'center',
-    'vertical-align':'center',
-    'background-color':'black',
-    '-webkit-border-radius':'100px',
-    '-moz-border-radius':'100px',
-    'border-radius':'100px',
+      'text-align':'center',
+      'vertical-align':'center',
+      'border':'5px solid orange'
   });
 
-
-  squareTopLeft = $('#sqr1').css({
-    '-webkit-border-top-left-radius':'100px',
-    '-moz-border-radius-topleft':'100px',
-    'border-top-left-radius':'100px',
-    '-webkit-border-bottom-right-radius':'50px',
-    '-moz-border-radius-bottomright':'50px',
-    'border-bottom-right-radius':'50px',
-    'background-color':'blue',
-  });
-
-  squareTopRight = $('#sqr2').css({
-    '-webkit-border-top-right-radius':'100px',
-    '-moz-border-radius-topright':'100px',
-    'border-top-right-radius':'100px',
-    '-webkit-border-bottom-left-radius':'50px',
-    '-moz-border-radius-bottomleft':'50px',
-    'border-bottom-left-radius':'50px',
-    'background-color':'yellow',
-  });
-
-  squareBottomLeft = $('#sqr3').css({
-    '-webkit-border-bottom-left-radius':'100px',
-    '-moz-border-radius-bottomleft':'100px',
-    'border-bottom-left-radius':'100px',
-    '-webkit-border-top-right-radius':'50px',
-    '-moz-border-radius-topright':'50px',
-    'border-top-right-radius':'50px',
-    'background-color':'red'
-  });
-
-  squareBottomRight = $('#sqr4').css({
-    '-webkit-border-bottom-right-radius':'100px',
-    '-moz-border-radius-bottomright':'100px',
-    'border-bottom-right-radius':'100px',
-    '-webkit-border-top-left-radius':'50px',
-    '-moz-border-radius-topleft':'50px',
-    'border-top-left-radius':'50px',
-    'background-color':'green',
-  });
+  $('#sqr1').css(squareTopLeft).on('click', getDarker);
+  $('#sqr2').css(squareTopRight);
+  $('#sqr3').css(squareBottomLeft);
+  $('#sqr4').css(squareBottomRight);
+  
+ 
+  
 
   randomizer();
 
@@ -118,11 +74,35 @@ function randomizer(){
   return randomPattern;
 }
 
+
 function idOfSquare(){
   // Got a number between 1 and 4
   var idOfSquare = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
   return idOfSquare;
 }
+
+function squareFactory(backgroundColor, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius, listener){
+  this.backgroundColor = backgroundColor;
+  this.height = height;
+  this.width = width;
+  this.margin = margin;
+  this.padding = padding;
+  this.display = display;
+  this.borderRadius = borderRadius;
+  this.mozBorderRadius = mozBorderRadius;
+  this.webkitBorderRadius = webkitBorderRadius;
+  this.listener = listener;
+};
+
+function getDarker(){
+  newColor = 'black';
+  console.log('getting css backgroundColor lighter: ' + newColor);
+
+
+};
+
+
+
 
 
 
