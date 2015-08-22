@@ -31,10 +31,10 @@ function setUp(){
   // Giving css attributes to the container and squares using a Square Factory:
   // (backgroundColor, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius)
   squareContainer = new squareFactory('black', '100px', '104px', '50px auto', '2px', 'block', '100px', '100px', '100px');
-  squareTopLeft = new squareFactory('red', '50px', '50px', '0', '0', 'inline-block', '100px 0 0 0', '100px 0 0 0', '100px 0 0 0', '.on("click", getDarker)');
-  squareTopRight = new squareFactory('yellow', '50px', '50px', '0', '0', 'inline-block', '0 100px  0 0', '0 100px  0 0', '0 100px  0 0');
-  squareBottomLeft = new squareFactory('blue', '50px', '50px', '0', '0', 'inline-block', '0 0 0 100px', '0 0 0 100px', '0 0 0 100px');
-  squareBottomRight = new squareFactory('green', '50px', '50px', '0', '0', 'inline-block', '0 0 100px 0', '0 0 100px 0', '0 0 100px 0');
+  squareTopLeft = new squareFactory('rgba(255,0,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '100px 0 0 0', '100px 0 0 0', '100px 0 0 0', '.on("click", getDarker)');
+  squareTopRight = new squareFactory('rgba(255,255,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 100px  0 0', '0 100px  0 0', '0 100px  0 0');
+  squareBottomLeft = new squareFactory('rgba(0,0,255,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 0 0 100px', '0 0 0 100px', '0 0 0 100px');
+  squareBottomRight = new squareFactory('rgba(0,255,0,0.8)', '50px', '50px', '0', '0', 'inline-block', '0 0 100px 0', '0 0 100px 0', '0 0 100px 0');
 
   console.log(squareContainer);
   
@@ -43,13 +43,13 @@ function setUp(){
   $('.containerClass').css({
       'text-align':'center',
       'vertical-align':'center',
-      'border':'5px solid orange'
+      'border':'5px solid black'
   });
 
-  $('#sqr1').css(squareTopLeft).on('click', getDarker);
-  $('#sqr2').css(squareTopRight);
-  $('#sqr3').css(squareBottomLeft);
-  $('#sqr4').css(squareBottomRight);
+  $('.sqr').css(squareTopLeft).on('click', getLighterColor).one('mouseout',getnormalColor);
+  $('#sqr2').css(squareTopRight).on('click', getLighterColor);
+  $('#sqr3').css(squareBottomLeft).on('click', getLighterColor);
+  $('#sqr4').css(squareBottomRight).on('click', getLighterColor);
   
  
   
@@ -94,12 +94,24 @@ function squareFactory(backgroundColor, width, height, margin, padding, display,
   this.listener = listener;
 };
 
-function getDarker(){
-  newColor = 'black';
-  console.log('getting css backgroundColor lighter: ' + newColor);
-
-
+function getLighterColor(){
+  // Color value had an Alpha value of '0.8' that now I'm replacing for '1'
+  // So color will look like lightener
+  color = $(this).css('background-color').replace('0.8','1');
+  newColor = $(this).css('background-color', color);
+  console.log('getting new css backgroundColor: ' + newColor);
+  //return color;
+  $(this).one('mouseout',getnormalColor(newColor));
 };
+
+function getnormalColor(newColor){
+  console.log('newcolor in get: ' + newColor);
+  //On mouse out color returns to its previous value
+  oldColor = color.replace('1','0.8');
+
+  console.log('again old color? ' + oldColor);
+  $(oldColor).delay(1000).css('background-color', 'black');
+}
 
 
 
