@@ -21,11 +21,11 @@ function setUp(){
   $('#container').html('<div id="sqr1" class="sqr"></div><div id="sqr2" class="sqr"></div><div id="sqr3" class="sqr"></div><div id="sqr4" class="sqr"></div>');
   // Giving css attributes to the container and squares using a Square Factory:
   // (backgroundColor, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius)
-  squareContainer = new SquareFactory('rgb(0,0,0)', '1', '100px', '104px', '50px auto', '2px', 'block', '100px', '100px', '100px');
-  squareBlue = new SquareFactory('rgb(0,0,255)', '0.7', '50px', '50px', '0', '0', 'inline-block', '100px 0 50px 0', '100px 0 50px 0', '100px 0 50px 0');
-  squareYellow = new SquareFactory('rgb(255,255,0)', '0.7', '50px', '50px', '0', '0', 'inline-block', '0 100px  0 50px', '0 100px  0 50px', '0 100px  0 50px');
-  squareRed = new SquareFactory('rgb(255,0,0)', '0.7', '50px', '50px', '0', '0', 'inline-block', '0 50px 0 100px', '0 50px 0 100px', '0 50px 0 100px');
-  squareGreen = new SquareFactory('rgb(0,255,0)', '0.7', '50px', '50px', '0', '0', 'inline-block', '50px 0 100px 0', '50px 0 100px 0', '50px 0 100px 0');
+  squareContainer = new SquareFactory('rgb(0,0,0)', '1', '200px', '200px', '50px auto', '2px', 'block', '200px', '200px', '200px');
+  squareBlue = new SquareFactory('rgb(0,0,255)', '0.7', '100px', '100px', '0', '0', 'inline-block', '100px 0 50px 0', '100px 0 50px 0', '100px 0 50px 0');
+  squareYellow = new SquareFactory('rgb(255,255,0)', '0.7', '100px', '100px', '0', '0', 'inline-block', '0 100px  0 50px', '0 100px  0 50px', '0 100px  0 50px');
+  squareRed = new SquareFactory('rgb(255,0,0)', '0.7', '100px', '100px', '0', '0', 'inline-block', '0 50px 0 100px', '0 50px 0 100px', '0 50px 0 100px');
+  squareGreen = new SquareFactory('rgb(0,255,0)', '0.7', '100px', '100px', '0', '0', 'inline-block', '50px 0 100px 0', '50px 0 100px 0', '50px 0 100px 0');
 
   console.log(squareContainer);
   
@@ -56,6 +56,7 @@ function idOfSquare(){
   var idOfSquare = Math.floor(Math.random() * (4 - 1 + 1)) + 1;
   return idOfSquare;
 }
+
 // Returns a random integer between numX and 1
 function randomizer(numX){
   randomPattern = [];
@@ -69,17 +70,18 @@ function randomizer(numX){
   console.log(randomPattern);
 
   // throught looping we get the DIVs with ids: #sqr1, #sqr2..
-  // need to use them to make colors change on the board 
-  for(i = 0; i < randomPattern.length; i++){
-    sqrShining = '#sqr' + randomPattern[i];
-    sqrShining = $(sqrShining)[0]
-    console.log('Next is sqrShining:');
-    console.log(sqrShining);
-    $(sqrShining).fadeTo(500, 1.0).fadeTo(500, 0.7);
-  };
+  // need doBlink to use them to make colors change on the board 
+  $.each(randomPattern, doBlink);
 
-  return randomPattern;
+  console.log('Say to player: IT\'S Your Turn');
 }
+
+function doBlink(index, element){
+
+    $('#sqr'+element).delay(1000 * index).fadeTo(300, 1.0).fadeTo(300, 0.7);
+
+}
+
 
 
 
@@ -115,7 +117,8 @@ function getLighterColor(){
 };
 
 function getnormalColor(){
-  console.log('newcolor in get: ' + color);
+  console.log('newcolor in get: ');
+  console.log(color)
   //On mouse out color returns to its previous value
   color = $(this).css('opacity', '0.8');
 }
