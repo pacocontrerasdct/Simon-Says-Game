@@ -34,8 +34,8 @@ function setUp(){
   $('main').append('<button id="startButton"><button id="quitButton">');
   $('#parr1').append('Welcome to <em>Simon On -Line</em>, an online game based in an electronic game of memory skill invented by Ralph H. Baer and Howard J. Morrison, with software programming by Lenny Cope. Simon was launched in 1978 at Studio 54 in New York City and was an immediate success, becoming a pop culture symbol of the 1970s and 1980s.');
   $('#parr2').append('Instructions to play: The device has four colored buttons, each producing a particular tone when it is pressed or activated by the device. A round in the game consists of the device lighting up one or more buttons in a random order, after which the player must reproduce that order by pressing the buttons. As the game progresses, the number of buttons to be pressed increases.');
-  $('#startButton').append('START');
-  $('#quitButton').append('QUIT');
+  $('#startButton').append('START').on('click', buildingBoard);
+  $('#quitButton').append('QUIT').on('click', quitGame);
 
  
 
@@ -152,8 +152,28 @@ function buildingBoard(){
   $('#sqr3').css(squareRed).on('click', recordingPLayerPattern);
   $('#sqr4').css(squareGreen).on('click', recordingPLayerPattern);
 
+  countDown();
+
 };
 
+function countDown(){
+  countDownNumbers = ['1','2','3'];
+  $('aside').html('<p id="parr3">');
+  $.each(countDownNumbers, function (index, element){
+
+    $('#parr3').append(element).delay(1000 * index).fadeTo(300, 1);
+    $('#parr3').remove(element).delay(1000 * index).fadeTo(300, 0);
+    console.log(element);
+  });
+};
+
+
+
+function quitGame(){
+  url = "https://www.google.co.uk/";
+    var newWindow = window.open('', '_self', ''); //open the current window
+    window.close(url);
+};
 
 
 
