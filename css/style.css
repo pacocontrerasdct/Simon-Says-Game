@@ -4,6 +4,36 @@ body {
   display: inline;
   margin: 0;
 }
-.shine{
-  background-color: white;
+h1 {
+  font-size: 60px;
+  color: khaki;
+  text-shadow: 2px 2px #666;
+}
+h2 {
+  font-size: 26px;
+  font-variant: small-caps;
+}
+button {
+  background-color: Brown;
+  font-size: 16px;
+  letter-spacing: 1px;
+  border-radius: 5px;
+  margin: 10px;
+  padding: 10px 25px;
+  border: none;
+  color: white;
+}
+button:hover {
+  background-color: darkYellow;
+  box-shadow: 1px 1px black;
+
+}
+.bigContainerClass{
+  margin : 0 auto;
+  padding: 20px; 
+  width : 400px;
+  min-height: 600px;
+  background-color: cornsilk;
+  text-align : center;
+  vertical-align :center;
 }
