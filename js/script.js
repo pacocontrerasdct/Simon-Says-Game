@@ -16,8 +16,9 @@ var squareBottomRight;
 var randomPattern = [];
 var playerPattern = [];
 var playersData = [];
-var listener;
-var numX = 4;
+var levelPassed = 0;
+var numX = 0;
+var startTime;
 
 
 function setUp(){
@@ -49,7 +50,7 @@ function idOfSquare(){
 
 // Returns a random integer between numX and 1
 function randomizer(){
-  var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 4)) + 1;
+  var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 1)) + 1;
   // Loop to create a pattern made by idOfSquare random numbers
   for(i = 0; i <= numSquaresForPattern; i++){
     number = idOfSquare();
@@ -57,7 +58,9 @@ function randomizer(){
   }
   console.log('Next is the pattern:');
   console.log(randomPattern);
-
+  // Getting starting time of game from the very first moment when ramdomPattern starts
+  startTime = $.now(); 
+  console.log(startTime);
   // throught looping we get the DIVs with ids: #sqr1, #sqr2..
   // need doBlink to use them to make colors change on the board 
   $.each(randomPattern, function(index, element){
@@ -69,11 +72,13 @@ function doBlink(index, element){
   time = index * 2000;
   console.log(time);
   setTimeout(function(){
-    $('#sqr'+element).fadeTo(250, 1).fadeTo(250, 0.7);
+    blink(element);
   }, time);
 }
 
-
+function blink(element){
+  $('#sqr'+element).fadeTo(250, 1).fadeTo(250, 0.7);
+};
 
 
 // Building Squares, or in others words css properties for colored divs
@@ -89,14 +94,6 @@ function SquareFactory(backgroundColor, opacity, width, height, margin, padding,
   this.mozBorderRadius = mozBorderRadius;
   this.webkitBorderRadius = webkitBorderRadius;
 };
-// New player function with Name, currentlevel, startTime from the beginning of game, record is a combination between levels passed and total time spent to pass them, playerPattern is the recording of the last pattern player did (helps to check with randomPattern)
-function NewPlayer(playerN){ 
-  this.name = playerN;
-  this.level = numX;
-  this.startTime = $.now(); // I'll need to sustract time from countdown
-  this.record = 0;
-  this.playerPattern = playerPattern;
-};
 
 function playerName(){
     // After showing board ask to player for a name
@@ -108,11 +105,14 @@ function playerName(){
   // On 'click' getting name
   $('#getNameButton').on('click',function(){
     inputFromPlayer = $('#inputName');
-    playerN = inputFromPlayer.val();
+    playerName = inputFromPlayer.val();
     // Creating a new player
-    playerId = new NewPlayer(playerN); // I'll need to create an object to keep
+    playerId = new NewPlayer(playerName); // I'll need to create an object to keep
                                     //all different players while the game is running  
-    playersData.push(playerId);
+    console.log(playerId);
+    
+    //playersData.push({playerId});
+    
     $('aside').html('');
     countDown();
   });
@@ -124,6 +124,7 @@ function playerName(){
 function recordingPlayerPattern(){
   // Each square has a dataset number as Id so I'm collect it now
   numSqr = $(this)[0].dataset.numbersquare;
+  blink(numSqr);
   playerPattern.push(numSqr); 
   console.log('Next is inside an array with pLayerPattern:');
   console.log(playerPattern);
@@ -134,10 +135,10 @@ function comparePatterns(){
   player = playerPattern.join();
 
   if(computer === player){
-    alert('YOU ARE THE BEST');
+    levelPassed = 1;
     randomPattern = [];
-    // numX++;
-    randomizer();
+    numX++;
+    buildingScore(levelPassed);
   }
   else{
     gameOver();
@@ -154,7 +155,7 @@ function buildingBoard(){
   // Giving css attributes to the container and squares using a Square Factory:
   // (backgroundColor, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius)
   squareContainer = new SquareFactory('rgb(0,0,0)', '1', '200px', '200px', '50px auto', '2px', 'block', '200px', '200px', '200px');
-  squareBlue = new SquareFactory('rgb(0,0,255)', '0.7', '100px', '100px', '0', '0', 'inline-block', '100px 0 50px 0', '100px 0 50px 0', '100px 0 50px 0');
+  squareBlue = new SquareFactory('rgb(5,135,255)', '0.7', '100px', '100px', '0', '0', 'inline-block', '100px 0 50px 0', '100px 0 50px 0', '100px 0 50px 0');
   squareYellow = new SquareFactory('rgb(255,255,0)', '0.7', '100px', '100px', '0', '0', 'inline-block', '0 100px  0 50px', '0 100px  0 50px', '0 100px  0 50px');
   squareRed = new SquareFactory('rgb(255,0,0)', '0.7', '100px', '100px', '0', '0', 'inline-block', '0 50px 0 100px', '0 50px 0 100px', '0 50px 0 100px');
   squareGreen = new SquareFactory('rgb(0,255,0)', '0.7', '100px', '100px', '0', '0', 'inline-block', '50px 0 100px 0', '50px 0 100px 0', '50px 0 100px 0');
@@ -174,7 +175,7 @@ function buildingBoard(){
   $('#sqr2').css(squareYellow).on('click', recordingPlayerPattern);
   $('#sqr3').css(squareRed).on('click', recordingPlayerPattern);
   $('#sqr4').css(squareGreen).on('click', recordingPlayerPattern);
-
+  // Ask player for his name
   playerName();
 
 };
@@ -190,21 +191,51 @@ function countDown(){
   $('#spanCountDown2').append(countDownNumbers[1] + '... ').delay(1000).slideUp(200, 0);
   $('#spanCountDown3').append(countDownNumbers[0] + '... ').delay(1500).slideUp(200, 0);
   $('#spanCountDown4').append('Go!').delay(2000).slideUp('slow', function(){
-    buildingScore(); 
+    buildingScore(levelPassed); 
   });
  };
 
-function buildingScore(){
-  $('aside').append('<span id="spanScore1" class="hide"></span><button id="checkPlayerPatternButton">');
-  nombre = playerId.name;
-  $('#spanScore1').delay(3000).slideDown(1000, 0).html('Hi ' + nombre + ', your level is: ' + playerId.level);
-  $('#checkPlayerPatternButton').append('CHECK').on('click', comparePatterns);
-  // Var numX pass a number to randomizer funct to get a max num of values for a Level of dificulty 
+function buildingScore(levelPassed){
+  if(levelPassed === 0){
+    $('aside').append('<span id="spanScore1" class="hide"></span><button id="checkPlayerPatternButton">');
+    nombre = playerId.name;
+    $('#spanScore1').slideDown(1000, 0).html('Hi ' + nombre + ', your level is: ' + playerId.level + '<br>');
+    $('#checkPlayerPatternButton').delay(3000).append('CHECK YOUR ANSWER').on('click', comparePatterns);
+  }else{
+    $('#spanScore1').slideDown(1000, 0).html('That was a correct answer ' + nombre + ',<br> your level is: ' + playerId.level + '<br>');
+  };
   randomizer();
 };
 
+// New player function with Name, max level, startTime from the beginning of game, record is a combination between levels passed and total time spent to pass them, playerPattern is the recording of the last pattern player did (helps to check with randomPattern)
+function NewPlayer(playerName){ 
+  this.name = playerName;
+  this.level = numX;
+  this.startTime = $.now() + 2627;
+  this.recordTime = ($.now()) - this.startTime;
+  this.playerPattern = playerPattern;
+};
+
+// Tracking all different players while game is active
+// Helpful for hall of fame
+function savingPlayersData(name, level, recordTime){
+    var playerToSave = name + ',' + level + ',' + recordTime;
+    playersData.push(playerToSave);
+    console.log('Players Data in savingPLayersData', playersData);
+};
+
 function playerUpdate(){
-  console.log(playersData.playerId.name);
+  // getting time now and when players started this game
+  now = $.now();
+  start = playerId.startTime;
+  recordTime = now - start;
+  name = playerId.name;
+  level = playerId.level;
+  
+  // Saving data in array for using later in hall of fame
+  savingPlayersData(name, level, recordTime);
+
+  hallOfFame();
 }
 
 // This function close the window and finishes the game
@@ -214,10 +245,35 @@ function quit(){
   window.close(url);
 };
 
+function hallOfFame(){
+  $('aside').append('<span id="hallOfFameId" class="visible">');
+  
+
+  $('#hallOfFameId').html('<br>HALL OF FAME:<br>');
+  console.log('Players Data in Hall of Fame' , playersData);
+  //playersOnHall = playersData.split(',');
+
+  $.each(playersData, function (index, element){
+    console.log('Players Data in Hall of Fame' , 'index: ' , index, ' element: ' , element);
+  });
+
+
+
+};
+
+
 function gameOver(){
   $('aside').append('<span id="spanGameOver1" class="visible">');
-  //$('#spanGameOver1').delay(2000).toggleClass(".hide");
-  $('#spanGameOver1').html('You made a mistake while repeating the pattern.<br/>The Game is over!<br/>This was the right pattern...').slideDown( 500 ).delay(4000).slideUp( 500 );
+  $('#spanGameOver1').html('You made a mistake while repeating the pattern.<br/>The Game is over!<br/>This was the right pattern...').slideDown( 500 ).delay(2000).slideUp('slow', function(){
+        console.log(randomPattern);
+        $.each(randomPattern, function(index, element){
+          doBlink(index, element);
+        });
+  });
+
+  playerUpdate();
+
+
 
 };
 
