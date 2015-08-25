@@ -2,7 +2,6 @@ $(document).ready(function(){
   
   console.log('Ready!!!');
 
-
   setUp();
 
 });
@@ -32,15 +31,11 @@ function setUp(){
 
   $('main').html('<p id="parr1"><p id="parr2">');
   $('main').append('<button id="startButton"><button id="quitButton">');
-  $('#parr1').append('Welcome to <em>Simon On -Line</em>, an online game based in an electronic game of memory skill invented by Ralph H. Baer and Howard J. Morrison, with software programming by Lenny Cope. Simon was launched in 1978 at Studio 54 in New York City and was an immediate success, becoming a pop culture symbol of the 1970s and 1980s.');
-  $('#parr2').append('Instructions to play: The device has four colored buttons, each producing a particular tone when it is pressed or activated by the device. A round in the game consists of the device lighting up one or more buttons in a random order, after which the player must reproduce that order by pressing the buttons. As the game progresses, the number of buttons to be pressed increases.');
+  $('#parr1').append('Welcome to <em>Simon On -Line</em>, an online game based in an electronic game of memory skill invented by Ralph H. Baer and Howard J. Morrison, with software programming by Lenny Cope. Simon was launched in 1978 at Studio 54 in New York City and was an immediate success, becoming a pop culture symbol of the 1970s and 1980s.').toggleClass("visible");
+  $('#parr2').append('Instructions to play: The device has four colored buttons, each producing a particular tone when it is pressed or activated by the device. A round in the game consists of the device lighting up one or more buttons in a random order, after which the player must reproduce that order by pressing the buttons. As the game progresses, the number of buttons to be pressed increases.').toggleClass("visible");
+  
   $('#startButton').append('START').on('click', buildingBoard);
   $('#quitButton').append('QUIT').on('click', quit);
-
-
-
-  // Var numX pass a number to randomizer funct to get a max num of values for a Level of dificulty 
-  randomizer(numX);
 
 };
 
@@ -52,7 +47,7 @@ function idOfSquare(){
 }
 
 // Returns a random integer between numX and 1
-function randomizer(numX){
+function randomizer(){
   var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 1)) + 1;
   // Loop to create a pattern made by idOfSquare random numbers
   for(i = 0; i <= numSquaresForPattern; i++){
@@ -92,7 +87,7 @@ function SquareFactory(backgroundColor, opacity, width, height, margin, padding,
   this.webkitBorderRadius = webkitBorderRadius;
 };
 // New player function with Name, currentlevel, startTime from the beginning of game, record is a combination between levels passed and total time spent to pass them, playerPattern is the recording of the last pattern player did (helps to check with randomPattern)
-function newPlayer(playerN){ 
+function NewPlayer(playerN){ 
   this.name = playerN;
   this.level = 0;
   this.startTime = $.now(); // I'll need to sustract time from countdown
@@ -103,29 +98,29 @@ function newPlayer(playerN){
 function playerName(){
     // After showing board ask to player for a name
   console.log('hello playerName');
-  alert('can get message on line 107');
-  $('aside').html('<p id="giveMeName"></p>');
-  $('#giveMeName').html('To start the game I will need your name, so I can keep your achievements updated in our Hall Of Fame.');
-  
-
 
   // Building a input area and a button to get player name
-  $('aside').html('<input id="inputName" type="text" placeholder="Enter a name"/><button id="getNameButton" type="button">Get me!');
+  $('aside').html('<p id="giveMeName"></p><input id="inputName" type="text" placeholder="Enter a name"/><button id="getNameButton" type="button">Get me!');
+  $('#giveMeName').append('To start the game I will need your name, so I can keep your achievements updated in our Hall Of Fame.');
   // On 'click' getting name
   $('#getNameButton').on('click',function(){
     inputFromPlayer = $('#inputName')[0];
     console.log(inputFromPlayer.value);
     playerN = inputFromPlayer.value;
     // Creating a new player
-    playerId = new newPlayer(playerN); // I'll need to create an object to keep
+    playerId = new NewPlayer(playerN); // I'll need to create an object to keep
                                     //all different players while the game is running  
+    $('aside').html('');
+    countDown();
+
+
   });
-  countDown();
+  
 }
 
 
 
-function recordingPLayerPattern(){
+function recordingPlayerPattern(){
   // Each square has a dataset number as Id so I'm collect it now
   numSqr = $(this)[0].dataset.numbersquare;
   playerPattern.push(numSqr); 
@@ -139,10 +134,12 @@ function comparePatterns(){
 
   if(computer === player){
     alert('YOU ARE THE BEST');
+    randomPattern = [];
   }
   else{
     alert('should empty array after compare patterns');
   }
+  playerPattern = [];
   console.log(computer);
   console.log(player);
 };
@@ -170,10 +167,10 @@ function buildingBoard(){
   });
 
   // Adding Click events to listening every colored div
-  $('#sqr1').css(squareBlue).on('click', recordingPLayerPattern);
-  $('#sqr2').css(squareYellow).on('click', recordingPLayerPattern);
-  $('#sqr3').css(squareRed).on('click', recordingPLayerPattern);
-  $('#sqr4').css(squareGreen).on('click', recordingPLayerPattern);
+  $('#sqr1').css(squareBlue).on('click', recordingPlayerPattern);
+  $('#sqr2').css(squareYellow).on('click', recordingPlayerPattern);
+  $('#sqr3').css(squareRed).on('click', recordingPlayerPattern);
+  $('#sqr4').css(squareGreen).on('click', recordingPlayerPattern);
 
   playerName();
 
@@ -183,15 +180,25 @@ function buildingBoard(){
 function countDown(){
   countDownNumbers = ['1','2','3','4']; 
   $.each(countDownNumbers, function (index, element){
-    spanTag = $('aside').append('<span id="span' + element + '">');
+    spanTag = $('aside').append('<span id="spanCountDown' + element + '">');
   });
- $('#span1').append(countDownNumbers[2] + '... ').delay(500).fadeTo(200, 0);
- $('#span2').append(countDownNumbers[1] + '... ').delay(1000).fadeTo(200, 0);
- $('#span3').append(countDownNumbers[0] + '... ').delay(1500).fadeTo(200, 0);
- $('#span4').append('Go!').fadeTo(0, 0).delay(2000).fadeTo(200, 1).delay(1000).fadeTo(200, 0);
+ $('#spanCountDown1').append(countDownNumbers[2] + '... ').delay(500).slideUp(200, 0);
+ $('#spanCountDown2').append(countDownNumbers[1] + '... ').delay(1000).slideUp(200, 0);
+ $('#spanCountDown3').append(countDownNumbers[0] + '... ').delay(1500).slideUp(200, 0);
+ $('#spanCountDown4').append('Go!').delay(2000).slideUp(200, 0);
+ 
+ buildingScore();
 
+};
 
+function buildingScore(){
 
+  $('aside').append('<span id="spanScore1" class="hide">');
+  nombre = playerId.name;
+  $('#spanScore1').delay(3000).slideDown(1000, 0).html('Hi ' + nombre);
+
+  // Var numX pass a number to randomizer funct to get a max num of values for a Level of dificulty 
+  randomizer();
 };
 
 
@@ -200,6 +207,13 @@ function quit(){
   url = "https://www.google.co.uk/";
   var newWindow = window.open('', '_self', ''); //open the current window
   window.close(url);
+};
+
+function gameOver(){
+  $('aside').append('<span id="spanGameOver1" class="visible">');
+  //$('#spanGameOver1').delay(2000).toggleClass(".hide");
+  $('#spanGameOver1').html('You made a mistake while repeating the pattern.<br/>The Game is over!<br/>This was the right pattern...').slideDown( 500 ).delay(4000).slideUp( 500 );
+
 };
 
 
