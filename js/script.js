@@ -15,8 +15,9 @@ var squareBottomLeft;
 var squareBottomRight;
 var randomPattern = [];
 var playerPattern = [];
+var playersData = [];
 var listener;
-var numX = 2;
+var numX = 4;
 
 
 function setUp(){
@@ -48,7 +49,7 @@ function idOfSquare(){
 
 // Returns a random integer between numX and 1
 function randomizer(){
-  var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 1)) + 1;
+  var numSquaresForPattern = Math.floor(Math.random() * (numX - 1 + 4)) + 1;
   // Loop to create a pattern made by idOfSquare random numbers
   for(i = 0; i <= numSquaresForPattern; i++){
     number = idOfSquare();
@@ -59,15 +60,17 @@ function randomizer(){
 
   // throught looping we get the DIVs with ids: #sqr1, #sqr2..
   // need doBlink to use them to make colors change on the board 
-  $.each(randomPattern, doBlink);
-
-  console.log('Say to player: IT\'S Your Turn');
+  $.each(randomPattern, function(index, element){
+    doBlink(index, element);
+  });
 }
 
 function doBlink(index, element){
-
-  $('#sqr'+element).delay(1000 * index).fadeTo(300, 1.0).fadeTo(300, 0.7);
-
+  time = index * 2000;
+  console.log(time);
+  setTimeout(function(){
+    $('#sqr'+element).fadeTo(250, 1).fadeTo(250, 0.7);
+  }, time);
 }
 
 
@@ -89,7 +92,7 @@ function SquareFactory(backgroundColor, opacity, width, height, margin, padding,
 // New player function with Name, currentlevel, startTime from the beginning of game, record is a combination between levels passed and total time spent to pass them, playerPattern is the recording of the last pattern player did (helps to check with randomPattern)
 function NewPlayer(playerN){ 
   this.name = playerN;
-  this.level = 0;
+  this.level = numX;
   this.startTime = $.now(); // I'll need to sustract time from countdown
   this.record = 0;
   this.playerPattern = playerPattern;
@@ -104,16 +107,14 @@ function playerName(){
   $('#giveMeName').append('To start the game I will need your name, so I can keep your achievements updated in our Hall Of Fame.');
   // On 'click' getting name
   $('#getNameButton').on('click',function(){
-    inputFromPlayer = $('#inputName')[0];
-    console.log(inputFromPlayer.value);
-    playerN = inputFromPlayer.value;
+    inputFromPlayer = $('#inputName');
+    playerN = inputFromPlayer.val();
     // Creating a new player
     playerId = new NewPlayer(playerN); // I'll need to create an object to keep
                                     //all different players while the game is running  
+    playersData.push(playerId);
     $('aside').html('');
     countDown();
-
-
   });
   
 }
@@ -135,9 +136,11 @@ function comparePatterns(){
   if(computer === player){
     alert('YOU ARE THE BEST');
     randomPattern = [];
+    // numX++;
+    randomizer();
   }
   else{
-    alert('should empty array after compare patterns');
+    gameOver();
   }
   playerPattern = [];
   console.log(computer);
@@ -182,25 +185,27 @@ function countDown(){
   $.each(countDownNumbers, function (index, element){
     spanTag = $('aside').append('<span id="spanCountDown' + element + '">');
   });
- $('#spanCountDown1').append(countDownNumbers[2] + '... ').delay(500).slideUp(200, 0);
- $('#spanCountDown2').append(countDownNumbers[1] + '... ').delay(1000).slideUp(200, 0);
- $('#spanCountDown3').append(countDownNumbers[0] + '... ').delay(1500).slideUp(200, 0);
- $('#spanCountDown4').append('Go!').delay(2000).slideUp(200, 0);
- 
- buildingScore();
 
-};
+  $('#spanCountDown1').append(countDownNumbers[2] + '... ').delay(500).slideUp(200, 0);
+  $('#spanCountDown2').append(countDownNumbers[1] + '... ').delay(1000).slideUp(200, 0);
+  $('#spanCountDown3').append(countDownNumbers[0] + '... ').delay(1500).slideUp(200, 0);
+  $('#spanCountDown4').append('Go!').delay(2000).slideUp('slow', function(){
+    buildingScore(); 
+  });
+ };
 
 function buildingScore(){
-
-  $('aside').append('<span id="spanScore1" class="hide">');
+  $('aside').append('<span id="spanScore1" class="hide"></span><button id="checkPlayerPatternButton">');
   nombre = playerId.name;
-  $('#spanScore1').delay(3000).slideDown(1000, 0).html('Hi ' + nombre);
-
+  $('#spanScore1').delay(3000).slideDown(1000, 0).html('Hi ' + nombre + ', your level is: ' + playerId.level);
+  $('#checkPlayerPatternButton').append('CHECK').on('click', comparePatterns);
   // Var numX pass a number to randomizer funct to get a max num of values for a Level of dificulty 
   randomizer();
 };
 
+function playerUpdate(){
+  console.log(playersData.playerId.name);
+}
 
 // This function close the window and finishes the game
 function quit(){
