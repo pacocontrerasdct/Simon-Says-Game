@@ -1,10 +1,14 @@
 $(document).ready(function(){
   console.log('Ready!!!');
+
   setUp();
+
 });
 
 function setUp(){
   numX = 0;
+  randomPattern = [];
+  playerPattern = [];
   // Building the page
   $('body').html('<div id="bigContainer" class="bigContainerClass"><header></header><main></main><aside></aside><footer></footer></div>');
   $('header').html('<h1 id="h1Header"><h2 id="h2Header">'); 
@@ -16,7 +20,6 @@ function setUp(){
   $('#parr2').append('Instructions to play: The application has four colored areas inside of a black circle, each producing a particular blink when it is clicked or activated by the computer. A round in the game consists of the computer lighting up one or more areas in a random order, after which the player must reproduce that order by clicking the same areas. As the game progresses, the number of areas to be clicked increases.').toggleClass("visible");
   $('#startButton').append('START').on('click', buildingBoard);
   $('#quitButton').append('QUIT').on('click', quit);
-  var levelPassed = 0;
 };
 
   // Declaring some variables
@@ -31,6 +34,7 @@ function setUp(){
   var playersData = [];
   var numX = 0;
   var startTime;
+  var levelPassed = 0;
 
 // Building Squares, or in others words css properties for colored divs
 function SquareFactory(backgroundColor, opacity, width, height, margin, padding, display, borderRadius, mozBorderRadius, webkitBorderRadius){
@@ -127,8 +131,8 @@ function buildingScore(levelPassed){
   if(levelPassed === 0){
     $('aside').append('<span id="spanScore1"></span><br><button id="checkPlayerPatternButton"></button><br><span id="spanScore2"></span><span id="spanScore3"></span>');
     nombre = playerId.name;
-    $('#spanScore1').slideDown(1000, 0).html('Hi ' + nombre + ', after clicking the colorful areas, just check if you did it well');
-    $('#checkPlayerPatternButton').delay(3000).append('CHECK YOUR ANSWER').on('click', comparePatterns);
+    $('#spanScore1').slideDown(1000, 0).html('Hi ' + nombre + ', wait until computer ends its pattern; after that, click the colorful areas repeating its pattern. Click CHECK to know if you did it well');
+    $('#checkPlayerPatternButton').delay(3000).append('CHECK').on('click', comparePatterns);
     $('#spanScore2').html('Level: ');
     $('#spanScore3').html(levelPassed);
   }else{
@@ -207,6 +211,7 @@ function comparePatterns(){
   else{
     // Reset variable for randomizer
     numX = 0;
+    levelPassed = 0;
     gameOver(); // If player fails go to game over
   }
   console.log(computer);
@@ -220,18 +225,17 @@ function gameOver(){
   $('aside').append('<span id="spanGameOver1"></span><br/><span id="spanGameOver2"></span><br/><span id="spanGameOver3"></span><br/><span id="spanGameOver4"></span>');
   $('#spanGameOver1').slideUp('slow').delay(2000).html('You made a mistake while repeating the pattern.').slideDown('slow').delay(2000);
   $('#spanGameOver2').slideUp('slow').delay(4000).html('The Game is over!').slideDown('slow').delay(2000);
-  $('#spanGameOver3').slideUp('slow').delay(6000).html('This was the right pattern...').slideDown('slow').delay(2000);
+  $('#spanGameOver3').slideUp('slow').delay(6000).html('Look at Simon, I will show you what was the right pattern...').slideDown('slow').delay(2000);
   $('#spanGameOver4').slideUp('slow').delay(8000).slideDown('slow', function(){
         console.log(randomPattern);
         $.each(randomPattern, function(index, element){
           doBlink(index, element);
         });
   }).delay(8000);
-
   //playerUpdate();
   setTimeout(function(){
     hallOfFame();
-  }, 12000);
+  }, 6000);
   
   
 
@@ -267,9 +271,9 @@ function quit(){
 };
 
 function hallOfFame(){
-  
   // Replacing 'Check it out' button for 'Restart' button
   $('#checkPlayerPatternButton').delay(3000).html('RESTART').on('click', setUp);
+  
   //debugger;
   //console.log('hall1 ' ,playersData);
   //$('aside').append('<span id="hallOfFameId" class="visible">');
